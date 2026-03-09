@@ -362,49 +362,90 @@ class ComprobanteController extends Controller
         $comprobante->load(['detalles', 'comprobanteRef']);
         $tenant = Auth::user()->tenant;
 
-        // Logo: convertir a base64 para embeber en el PDF (dompdf no accede a URLs externas)
-        $logoUrl = null;
-        if ($tenant->logo && Storage::disk('public')->exists($tenant->logo)) {
-            $logoData    = base64_encode(Storage::disk('public')->get($tenant->logo));
-            $logoMime    = Storage::disk('public')->mimeType($tenant->logo) ?: 'image/png';
-            $logoUrl     = "data:{$logoMime};base64,{$logoData}";
+        // Determinar formato según tipo y configuración del tenant
+        $esBoleta = $comprobante->tipo_comprobante === '03';
+        $esNc     = $comprobante->tipo_comprobante === '07';
+
+        if ($esBoleta) {
+            $formato = $tenant->formato_impresion_boleta ?? 'a4';
+        } elseif ($esNc) {
+            $tipoRef = $comprobante->comprobanteRef?->tipo_comprobante ?? '01';
+            $formato = $tipoRef === '03'
+                ? ($tenant->formato_impresion_boleta ?? 'a4')
+                : ($tenant->formato_impresion_factura ?? 'a4');
+        } else {
+            $formato = $tenant->formato_impresion_factura ?? 'a4';
         }
 
+        // Logo embebido como base64
+        $logoUrl = null;
+        if ($tenant->logo && Storage::disk('public')->exists($tenant->logo)) {
+            $logoData = base64_encode(Storage::disk('public')->get($tenant->logo));
+            $logoMime = Storage::disk('public')->mimeType($tenant->logo) ?: 'image/png';
+            $logoUrl  = "data:{$logoMime};base64,{$logoData}";
+        }
+
+        // QR con datos estándar SUNAT (formato verificable)
+        $qrData = implode('|', [
+            $tenant->ruc,
+            $comprobante->tipo_comprobante,
+            $comprobante->serie,
+            str_pad($comprobante->correlativo, 8, '0', STR_PAD_LEFT),
+            number_format((float) $comprobante->igv, 2, '.', ''),
+            number_format((float) $comprobante->total, 2, '.', ''),
+            $comprobante->fecha_emision->format('Y-m-d'),
+            $comprobante->cliente_tipo_doc,
+            $comprobante->cliente_num_doc,
+            $comprobante->hash_cpe ?? '',
+        ]);
+        $qrBase64 = $this->generarQrBase64($qrData);
+
         $motivosLabel = [
-            '01' => 'Anulación de la operación',
-            '02' => 'Anulación por error en RUC',
-            '03' => 'Corrección por error en la descripción',
-            '04' => 'Descuento global',
-            '05' => 'Descuento por ítem',
-            '06' => 'Devolución total',
-            '07' => 'Devolución por ítem',
-            '08' => 'Bonificación',
-            '09' => 'Disminución en el valor',
-            '10' => 'Otros conceptos',
+            '01' => 'Anulación de la operación',    '02' => 'Anulación por error en RUC',
+            '03' => 'Corrección en descripción',     '04' => 'Descuento global',
+            '05' => 'Descuento por ítem',             '06' => 'Devolución total',
+            '07' => 'Devolución por ítem',            '08' => 'Bonificación',
+            '09' => 'Disminución en el valor',        '10' => 'Otros conceptos',
         ];
 
-        $pdf = Pdf::loadView('pdf.comprobante', [
+        $viewData = [
             'comprobante'   => $comprobante,
-            'tenant'        => [
-                'razon_social' => $tenant->razon_social,
-                'ruc'          => $tenant->ruc,
-                'direccion'    => $tenant->direccion,
-                'departamento' => $tenant->departamento,
-                'provincia'    => $tenant->provincia,
-                'distrito'     => $tenant->distrito,
-                'email'        => $tenant->email,
-            ],
+            'tenant'        => $tenant,
             'logoUrl'       => $logoUrl,
+            'qrBase64'      => $qrBase64,
             'numero'        => $comprobante->numero,
             'tipoLabel'     => $comprobante->tipo_label,
             'fechaEmision'  => $comprobante->fecha_emision->format('d/m/Y'),
             'monedaSimbolo' => $comprobante->moneda === 'PEN' ? 'S/' : 'US$',
             'motivoLabel'   => $motivosLabel[$comprobante->motivo_nota ?? ''] ?? '',
-        ])->setPaper('a4', 'portrait');
+        ];
 
         $filename = $comprobante->nombre_archivo . '.pdf';
 
+        if ($formato === 'ticket') {
+            // 80mm = 226.77pt. Alto grande para contenido variable.
+            $pdf = Pdf::loadView('pdf.comprobante_ticket', $viewData)
+                ->setPaper([0, 0, 226.77, 841.89], 'portrait');
+        } else {
+            $pdf = Pdf::loadView('pdf.comprobante_a4', $viewData)
+                ->setPaper('a4', 'portrait');
+        }
+
         return $pdf->download($filename);
+    }
+
+    private function generarQrBase64(string $contenido): string
+    {
+        try {
+            $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                new \BaconQrCode\Renderer\RendererStyle\RendererStyle(140),
+                new \BaconQrCode\Renderer\Image\GDLibPngImageBackEnd()
+            );
+            $png = (new \BaconQrCode\Writer($renderer))->writeString($contenido);
+            return 'data:image/png;base64,' . base64_encode($png);
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     public function verXml(Comprobante $comprobante)

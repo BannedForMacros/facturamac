@@ -23,6 +23,8 @@ interface TenantData {
     sunat_beta: boolean;
     tiene_certificado: boolean;
     logo?: string;
+    formato_impresion_factura: string;
+    formato_impresion_boleta: string;
 }
 
 interface Props extends PageProps {
@@ -58,6 +60,8 @@ export default function ConfiguracionTenant({ tenant, flash }: Props) {
         clave_sol_password: string;
         certificado_password: string;
         sunat_beta: boolean;
+        formato_impresion_factura: string;
+        formato_impresion_boleta: string;
         certificado_pfx: File | null;
         logo: File | null;
         _method: string;
@@ -75,6 +79,8 @@ export default function ConfiguracionTenant({ tenant, flash }: Props) {
         clave_sol_password: '',
         certificado_password: '',
         sunat_beta: tenant.sunat_beta,
+        formato_impresion_factura: tenant.formato_impresion_factura ?? 'a4',
+        formato_impresion_boleta: tenant.formato_impresion_boleta ?? 'a4',
         certificado_pfx: null,
         logo: null,
         _method: 'PUT',
@@ -346,6 +352,55 @@ export default function ConfiguracionTenant({ tenant, flash }: Props) {
                             placeholder="Dejar vacío para no cambiar"
                             error={errors.certificado_password}
                         />
+                    </Card.Body>
+                </Card>
+
+                {/* Formato de Impresión */}
+                <Card>
+                    <Card.Header
+                        title="Formato de Impresión de Comprobantes"
+                        subtitle="Configura el tamaño de papel para los PDF generados."
+                    />
+                    <Card.Body className="space-y-5">
+                        {/* Factura */}
+                        <div>
+                            <p className="text-sm font-medium text-gray-700 mb-3">Factura Electrónica</p>
+                            <div className="flex gap-3">
+                                {[
+                                    { value: 'a4', label: 'A4', desc: 'Hoja carta estándar', icon: '📄' },
+                                ].map(opt => (
+                                    <label key={opt.value} className={`flex flex-1 cursor-pointer items-start gap-3 rounded-lg border-2 p-3 transition-colors ${data.formato_impresion_factura === opt.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                                        <input type="radio" name="formato_factura" value={opt.value} checked={data.formato_impresion_factura === opt.value} onChange={() => setData('formato_impresion_factura', opt.value)} className="mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-900">{opt.icon} {opt.label}</p>
+                                            <p className="text-xs text-gray-500">{opt.desc}</p>
+                                        </div>
+                                    </label>
+                                ))}
+                                <div className="flex-1 rounded-lg border-2 border-dashed border-gray-100 p-3 bg-gray-50">
+                                    <p className="text-xs text-gray-400">Las facturas siempre se imprimen en A4 por estándar tributario.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Boleta */}
+                        <div>
+                            <p className="text-sm font-medium text-gray-700 mb-3">Boleta de Venta Electrónica</p>
+                            <div className="flex gap-3">
+                                {[
+                                    { value: 'a4', label: 'A4', desc: 'Hoja carta estándar', icon: '📄' },
+                                    { value: 'ticket', label: 'Ticket 80mm', desc: 'Impresora térmica (POS)', icon: '🧾' },
+                                ].map(opt => (
+                                    <label key={opt.value} className={`flex flex-1 cursor-pointer items-start gap-3 rounded-lg border-2 p-3 transition-colors ${data.formato_impresion_boleta === opt.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                                        <input type="radio" name="formato_boleta" value={opt.value} checked={data.formato_impresion_boleta === opt.value} onChange={() => setData('formato_impresion_boleta', opt.value)} className="mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-900">{opt.icon} {opt.label}</p>
+                                            <p className="text-xs text-gray-500">{opt.desc}</p>
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
                     </Card.Body>
                 </Card>
 

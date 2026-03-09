@@ -31,6 +31,8 @@ class TenantController extends Controller
                 'sunat_beta' => $tenant->sunat_beta,
                 'tiene_certificado' => (bool) $tenant->certificado_pfx,
                 'logo' => $tenant->logo,
+                'formato_impresion_factura' => $tenant->formato_impresion_factura ?? 'a4',
+                'formato_impresion_boleta'  => $tenant->formato_impresion_boleta ?? 'a4',
             ],
         ]);
     }
@@ -55,6 +57,8 @@ class TenantController extends Controller
             'certificado_password' => 'nullable|string|max:255',
             'sunat_beta' => 'boolean',
             'logo' => 'nullable|image|max:2048',
+            'formato_impresion_factura' => 'nullable|in:a4',
+            'formato_impresion_boleta'  => 'nullable|in:a4,ticket',
         ];
 
         $validated = $request->validate($rules);
@@ -69,7 +73,9 @@ class TenantController extends Controller
             'distrito' => $validated['distrito'] ?? null,
             'email' => $validated['email'] ?? null,
             'telefono' => $validated['telefono'] ?? null,
-            'sunat_beta' => $request->boolean('sunat_beta', true),
+            'sunat_beta'                 => $request->boolean('sunat_beta', true),
+            'formato_impresion_factura' => $validated['formato_impresion_factura'] ?? 'a4',
+            'formato_impresion_boleta'  => $validated['formato_impresion_boleta'] ?? 'a4',
         ];
 
         if (!empty($validated['clave_sol_usuario'])) {

@@ -24,6 +24,8 @@ class Tenant extends Model
         'certificado_password',
         'sunat_beta',
         'logo',
+        'formato_impresion_factura',
+        'formato_impresion_boleta',
         'activo',
     ];
 
