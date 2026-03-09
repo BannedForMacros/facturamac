@@ -99,6 +99,13 @@ body {
             {{ $comprobante->cliente_direccion }}
         </div>
         @endif
+        <div>
+            <span class="label">Pago:</span>
+            {{ $comprobante->forma_pago ?? 'Contado' }}
+            @if($comprobante->forma_pago === 'Credito' && $comprobante->fecha_vencimiento)
+            — Vence: {{ $comprobante->fecha_vencimiento->format('d/m/Y') }}
+            @endif
+        </div>
     </div>
 
     {{-- NC referencia --}}

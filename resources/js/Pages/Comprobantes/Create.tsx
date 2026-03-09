@@ -79,6 +79,8 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
         cliente_razon_social: string;
         cliente_direccion: string;
         observaciones: string;
+        forma_pago: string;
+        fecha_vencimiento: string;
         detalles: DetalleForm[];
         emitir_ahora: boolean;
     }>({
@@ -87,6 +89,8 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
         fecha_emision: new Date().toISOString().split('T')[0],
         moneda: 'PEN',
         tipo_cambio: '1',
+        forma_pago: 'Contado',
+        fecha_vencimiento: '',
         cliente_id: '',
         cliente_tipo_doc: '',
         cliente_num_doc: '',
@@ -200,7 +204,7 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
                 <Card>
                     <Card.Header title="Datos del Comprobante" />
                     <Card.Body>
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:grid-rows-2">
                             <Select
                                 label="Tipo de Comprobante"
                                 required
@@ -239,6 +243,25 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
                                 value={data.moneda}
                                 onChange={(e) => setData('moneda', e.target.value)}
                             />
+                            <Select
+                                label="Forma de Pago"
+                                required
+                                options={[
+                                    { value: 'Contado', label: 'Contado' },
+                                    { value: 'Credito', label: 'Crédito' },
+                                ]}
+                                value={data.forma_pago}
+                                onChange={(e) => setData('forma_pago', e.target.value)}
+                            />
+                            {data.forma_pago === 'Credito' && (
+                                <Input
+                                    label="Fecha de Vencimiento"
+                                    type="date"
+                                    value={data.fecha_vencimiento}
+                                    onChange={(e) => setData('fecha_vencimiento', e.target.value)}
+                                    error={errors.fecha_vencimiento}
+                                />
+                            )}
                         </div>
                     </Card.Body>
                 </Card>

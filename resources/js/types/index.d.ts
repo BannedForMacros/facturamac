@@ -75,6 +75,8 @@ export interface Comprobante {
     igv: number;
     total: number;
     estado: 'borrador' | 'enviado' | 'aceptado' | 'rechazado' | 'anulado';
+    forma_pago?: string;
+    condicion_pago?: string;
     estado_color: string;
     sunat_codigo?: string;
     sunat_descripcion?: string;

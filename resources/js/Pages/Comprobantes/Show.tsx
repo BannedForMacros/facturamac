@@ -188,7 +188,7 @@ export default function ComprobanteShow({ comprobante, flash, series_nc }: Props
                                 Consultar SUNAT
                             </Button>
                         )}
-                        <a href={route('comprobantes.pdf', comprobante.id)} target="_blank">
+                        <a href={route('comprobantes.pdf', comprobante.id)} target="_blank" rel="noreferrer">
                             <Button variant="secondary" icon={<Download size={16} />}>
                                 Descargar PDF
                             </Button>

@@ -3,116 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: DejaVu Sans, Arial, sans-serif; font-size:9.5px; color:#1e293b; background:#fff; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ─── Cabecera ─── */
-.header-wrap {
-    display: table; width: 100%; border-collapse: collapse;
-    border-bottom: 3px solid #1e40af; padding-bottom: 14px; margin-bottom: 14px;
-}
-.header-empresa { display: table-cell; vertical-align: middle; width: 58%; padding-right: 16px; }
-.header-docbox  { display: table-cell; vertical-align: middle; width: 42%; text-align: center; }
-
-.logo-img { max-height: 56px; max-width: 170px; object-fit: contain; margin-bottom: 6px; }
-.empresa-nombre {
-    font-size: 13.5px; font-weight: bold; color: #0f172a; text-transform: uppercase;
-    letter-spacing: 0.3px; line-height: 1.2;
-}
-.empresa-ruc  { font-size: 10px; color: #334155; margin-top: 3px; }
-.empresa-addr { font-size: 8.5px; color: #64748b; margin-top: 2px; line-height: 1.5; }
-
-.doc-box {
-    border: 2px solid #1e40af; border-radius: 8px;
-    padding: 12px 16px; background: #eff6ff;
-}
-.doc-tipo   { font-size: 11px; font-weight: bold; color: #1e40af; text-transform: uppercase; letter-spacing: 0.6px; }
-.doc-serie  { font-size: 17px; font-weight: bold; color: #0f172a; font-family: "Courier New", monospace; margin: 5px 0 3px; }
-.doc-fecha  { font-size: 8.5px; color: #64748b; }
-.doc-moneda { font-size: 8.5px; color: #64748b; margin-top: 2px; }
-
-/* NC reference */
-.nc-alert {
-    display: table; width: 100%; margin-bottom: 12px;
-    background: #fef9c3; border: 1px solid #eab308;
-    border-radius: 5px; padding: 7px 12px; font-size: 8.5px; color: #713f12;
+body {
+    font-family: DejaVu Sans, Arial, sans-serif;
+    font-size: 9pt;
+    color: #000;
+    background: #fff;
 }
 
-/* ─── Cliente + emisión ─── */
-.section-grid { display: table; width: 100%; margin-bottom: 12px; }
-.section-col  { display: table-cell; vertical-align: top; }
-.section-col-left  { width: 57%; padding-right: 12px; }
-.section-col-right { width: 43%; }
+/* ─── Utilidades ─── */
+.bold   { font-weight: bold; }
+.small  { font-size: 7.5pt; }
+.xsmall { font-size: 7pt; }
+.right  { text-align: right; }
+.center { text-align: center; }
+.upper  { text-transform: uppercase; }
 
-.section-box {
-    border: 1px solid #e2e8f0; border-radius: 5px; padding: 9px 11px;
-    background: #f8fafc;
-}
-.section-head {
-    font-size: 7.5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px;
-    color: #1e40af; margin-bottom: 6px; padding-bottom: 4px;
-    border-bottom: 1px solid #e2e8f0;
-}
-.kv-row { display: table; width: 100%; margin-bottom: 3.5px; }
-.kv-k { display: table-cell; width: 85px; font-size: 8.5px; color: #64748b; }
-.kv-v { display: table-cell; font-size: 8.5px; font-weight: 600; color: #0f172a; }
+/* ─── Página ─── */
+.page { padding: 18mm 15mm 12mm 15mm; }
 
-/* ─── Tabla items ─── */
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-.items-table thead tr {
-    background: #1e40af; color: #ffffff;
+/* ════════════════════════════════
+   CABECERA
+════════════════════════════════ */
+.header-table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; }
+.header-empresa { vertical-align: top; width: 62%; padding-right: 6mm; }
+.header-docbox  { vertical-align: top; width: 38%; }
+
+/* Logo */
+.logo { max-height: 18mm; max-width: 50mm; margin-bottom: 2mm; }
+.empresa-nombre { font-size: 11pt; font-weight: bold; text-transform: uppercase; line-height: 1.2; }
+.empresa-sub    { font-size: 8pt; margin-top: 1mm; line-height: 1.5; color: #222; }
+
+/* Recuadro del documento — borde doble como las facturas reales */
+.docbox-outer {
+    border: 2.5pt solid #000;
+    padding: 2pt;
 }
+.docbox-inner {
+    border: 1pt solid #000;
+    padding: 6pt 8pt;
+    text-align: center;
+}
+.docbox-ruc   { font-size: 8pt; font-weight: bold; margin-bottom: 3pt; }
+.docbox-tipo  { font-size: 9pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3pt; }
+.docbox-serie { font-size: 13pt; font-weight: bold; font-family: "Courier New", monospace; margin: 4pt 0 2pt; }
+
+/* ════════════════════════════════
+   CLIENTE / DATOS EMISION
+════════════════════════════════ */
+.datos-table {
+    width: 100%; border-collapse: collapse;
+    border: 1pt solid #000;
+    margin-bottom: 4mm;
+}
+.datos-table td { padding: 2.5pt 5pt; font-size: 8.5pt; }
+.datos-table .lbl { font-weight: bold; white-space: nowrap; width: 1px; }
+.datos-divider { border-left: 1pt solid #000; }
+.datos-row-border { border-top: 0.5pt solid #ccc; }
+
+/* ════════════════════════════════
+   TABLA DE ITEMS
+════════════════════════════════ */
+.items-table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; }
+.items-table th, .items-table td { border: 0.5pt solid #000; padding: 3pt 4pt; }
+
 .items-table thead th {
-    padding: 7px 9px; font-size: 8px; font-weight: bold;
-    text-transform: uppercase; letter-spacing: 0.5px;
+    background: #000;
+    color: #fff;
+    font-size: 7.5pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
 }
-.items-table tbody tr { border-bottom: 1px solid #f1f5f9; }
-.items-table tbody tr:nth-child(even) { background: #f8fafc; }
-.items-table td { padding: 6px 9px; font-size: 9px; vertical-align: middle; }
-.r { text-align: right; }
-.c { text-align: center; }
+.items-table thead th:first-child { text-align: left; }
 
-.badge-afecto { background:#dbeafe; color:#1d4ed8; padding:1px 6px; border-radius:10px; font-size:7.5px; font-weight:700; }
-.badge-exo    { background:#f1f5f9; color:#64748b; padding:1px 6px; border-radius:10px; font-size:7.5px; }
+.items-table tbody td { font-size: 8.5pt; vertical-align: top; }
+.items-table tbody tr:nth-child(even) td { background: #f7f7f7; }
 
-/* ─── Bloque inferior: obs + totales ─── */
-.bottom-wrap { display: table; width: 100%; margin-bottom: 14px; }
-.obs-cell  { display: table-cell; vertical-align: top; width: 55%; padding-right: 14px; }
-.tot-cell  { display: table-cell; vertical-align: top; width: 45%; }
+/* ════════════════════════════════
+   TOTALES + OBSERVACIONES
+════════════════════════════════ */
+.bottom-table { width: 100%; border-collapse: collapse; margin-bottom: 5mm; }
+.obs-cell { vertical-align: top; width: 55%; padding-right: 5mm; }
+.tot-cell { vertical-align: top; width: 45%; }
 
-.obs-box {
-    border: 1px solid #e2e8f0; border-radius: 5px; padding: 9px 11px;
-    background: #f8fafc; min-height: 58px; font-size: 8.5px; color: #475569;
+.obs-box { border: 0.5pt solid #000; padding: 4pt 6pt; min-height: 18mm; font-size: 8pt; line-height: 1.5; }
+.obs-lbl  { font-size: 7pt; font-weight: bold; text-transform: uppercase; margin-bottom: 2pt; }
+
+.tot-table { width: 100%; border-collapse: collapse; border: 0.5pt solid #000; }
+.tot-table td { padding: 2.5pt 5pt; font-size: 8.5pt; border-bottom: 0.5pt solid #ddd; }
+.tot-table .tot-lbl { }
+.tot-table .tot-val { text-align: right; font-weight: bold; border-left: 0.5pt solid #000; }
+.tot-table .tot-grand td { border-top: 1.5pt solid #000; border-bottom: none; font-size: 9.5pt; font-weight: bold; }
+
+/* Son: (monto en letras) */
+.monto-letras { border: 0.5pt solid #000; padding: 3pt 5pt; font-size: 7.5pt; margin-bottom: 4mm; }
+.monto-letras span { font-weight: bold; }
+
+/* ════════════════════════════════
+   PIE — QR + LEGAL
+════════════════════════════════ */
+.footer-table { width: 100%; border-collapse: collapse; border-top: 1pt solid #000; padding-top: 3mm; }
+.footer-qr   { vertical-align: middle; width: 32mm; }
+.footer-info { vertical-align: middle; padding-left: 5mm; font-size: 7.5pt; line-height: 1.6; color: #333; }
+.qr-img      { width: 28mm; height: 28mm; }
+.qr-lbl      { font-size: 6pt; text-align: center; margin-top: 1mm; }
+
+/* NC referencia */
+.nc-box {
+    border: 0.5pt solid #000; border-left: 3pt solid #000;
+    padding: 3pt 6pt; margin-bottom: 4mm; font-size: 8pt;
 }
-.obs-head { font-size: 7.5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; margin-bottom: 5px; }
 
-.tot-table { width: 100%; border-collapse: collapse; }
-.tot-table td { padding: 3.5px 8px; font-size: 9px; }
-.tot-label { color: #64748b; }
-.tot-value { text-align: right; font-weight: 600; color: #0f172a; }
-.tot-divider td { border-top: 1.5px solid #1e40af; padding-top: 6px !important; }
-.tot-total .tot-label { font-size: 11px; font-weight: bold; color: #1e40af; }
-.tot-total .tot-value { font-size: 12px; font-weight: bold; color: #1e40af; }
-
-/* ─── Pie con QR ─── */
-.footer-wrap {
-    display: table; width: 100%; border-top: 2px solid #e2e8f0;
-    padding-top: 10px;
-}
-.footer-qr   { display: table-cell; vertical-align: middle; width: 110px; }
-.footer-info { display: table-cell; vertical-align: middle; padding-left: 14px; }
-.footer-legal { font-size: 7.5px; color: #94a3b8; line-height: 1.6; }
-.footer-legal strong { color: #64748b; }
-.qr-img { width: 90px; height: 90px; }
-.qr-label { font-size: 6.5px; color: #94a3b8; text-align: center; margin-top: 3px; }
-
-/* Watermark anulado */
+/* Anulado: marca de agua */
 .watermark {
-    position: fixed; top: 40%; left: 10%; width: 80%;
-    text-align: center; font-size: 72px; font-weight: bold;
-    color: rgba(239,68,68,0.12); text-transform: uppercase;
-    transform: rotate(-35deg); pointer-events: none; z-index: 0;
-    letter-spacing: 10px;
+    position: fixed; top: 42%; left: 8%; width: 84%;
+    text-align: center; font-size: 80pt; font-weight: bold;
+    color: rgba(0,0,0,0.07); text-transform: uppercase;
+    transform: rotate(-35deg); letter-spacing: 8pt; pointer-events: none;
 }
 </style>
 </head>
@@ -122,203 +131,211 @@ body { font-family: DejaVu Sans, Arial, sans-serif; font-size:9.5px; color:#1e29
 <div class="watermark">ANULADO</div>
 @endif
 
-<div style="padding: 22px 28px;">
+<div class="page">
 
-{{-- ══════ CABECERA ══════ --}}
-<div class="header-wrap">
-    <div class="header-empresa">
+{{-- ══════════════════════════════════
+     CABECERA
+══════════════════════════════════ --}}
+<table class="header-table">
+<tr>
+    <td class="header-empresa">
         @if($logoUrl)
-            <img src="{{ $logoUrl }}" class="logo-img" alt="Logo">
+        <div><img src="{{ $logoUrl }}" class="logo" alt="Logo"></div>
         @endif
         <div class="empresa-nombre">{{ $tenant->razon_social }}</div>
-        <div class="empresa-ruc">RUC: <strong>{{ $tenant->ruc }}</strong></div>
-        <div class="empresa-addr">{{ $tenant->direccion }}</div>
-        @if($tenant->departamento)
-        <div class="empresa-addr">{{ $tenant->departamento }} &mdash; {{ $tenant->provincia }} &mdash; {{ $tenant->distrito }}</div>
-        @endif
-        @if($tenant->email)
-        <div class="empresa-addr">{{ $tenant->email }}</div>
-        @endif
-    </div>
-    <div class="header-docbox">
-        <div class="doc-box">
-            <div class="doc-tipo">{{ $tipoLabel }}</div>
-            <div class="doc-serie">{{ $numero }}</div>
-            <div class="doc-fecha">Fecha: {{ $fechaEmision }}</div>
-            <div class="doc-moneda">Moneda: {{ $comprobante->moneda === 'PEN' ? 'Soles (PEN)' : 'Dólares (USD)' }}</div>
+        <div class="empresa-sub">
+            RUC: <strong>{{ $tenant->ruc }}</strong><br>
+            {{ $tenant->direccion }}
+            @if($tenant->departamento)
+            <br>{{ $tenant->departamento }}
+            @if($tenant->provincia) – {{ $tenant->provincia }}@endif
+            @if($tenant->distrito) – {{ $tenant->distrito }}@endif
+            @endif
+            @if($tenant->email)<br>{{ $tenant->email }}@endif
         </div>
-    </div>
-</div>
+    </td>
+    <td class="header-docbox">
+        <div class="docbox-outer">
+            <div class="docbox-inner">
+                <div class="docbox-ruc">R.U.C. {{ $tenant->ruc }}</div>
+                <div class="docbox-tipo">{{ $tipoLabel }}</div>
+                <div class="docbox-serie">{{ $numero }}</div>
+            </div>
+        </div>
+    </td>
+</tr>
+</table>
 
 {{-- NC referencia --}}
-@if($esNc = ($comprobante->tipo_comprobante === '07' && $comprobante->comprobanteRef))
-<div class="nc-alert">
-    <strong>Nota de Crédito</strong> &mdash;
-    Motivo: {{ $motivoLabel }} &mdash;
-    Documento referido: <strong>{{ $comprobante->comprobanteRef->numero }}</strong>
+@if($comprobante->tipo_comprobante === '07' && $comprobante->comprobanteRef)
+<div class="nc-box">
+    <span class="bold">Nota de Crédito</span> — Motivo: {{ $motivoLabel }}
+    &nbsp;·&nbsp; Documento afectado: <span class="bold">{{ $comprobante->comprobanteRef->numero }}</span>
     ({{ $comprobante->comprobanteRef->tipo_label }})
 </div>
 @endif
 
-{{-- ══════ CLIENTE + DATOS EMISIÓN ══════ --}}
-<div class="section-grid">
-    <div class="section-col section-col-left">
-        <div class="section-box">
-            <div class="section-head">Datos del Adquiriente / Cliente</div>
-            <div class="kv-row">
-                <span class="kv-k">{{ $comprobante->cliente_tipo_doc === '6' ? 'RUC' : 'DNI / Doc.' }}:</span>
-                <span class="kv-v">{{ $comprobante->cliente_num_doc }}</span>
-            </div>
-            <div class="kv-row">
-                <span class="kv-k">Razón Social:</span>
-                <span class="kv-v">{{ $comprobante->cliente_razon_social }}</span>
-            </div>
-            @if($comprobante->cliente_direccion)
-            <div class="kv-row">
-                <span class="kv-k">Dirección:</span>
-                <span class="kv-v">{{ $comprobante->cliente_direccion }}</span>
-            </div>
+{{-- ══════════════════════════════════
+     DATOS CLIENTE / COMPROBANTE
+══════════════════════════════════ --}}
+<table class="datos-table">
+    <tr>
+        <td class="lbl">Señor(es):</td>
+        <td colspan="3"><span class="bold">{{ $comprobante->cliente_razon_social }}</span></td>
+        <td class="lbl datos-divider">Fecha emisión:</td>
+        <td>{{ $fechaEmision }}</td>
+    </tr>
+    <tr class="datos-row-border">
+        <td class="lbl">{{ $comprobante->cliente_tipo_doc === '6' ? 'R.U.C.' : 'DNI / Doc.' }}:</td>
+        <td>{{ $comprobante->cliente_num_doc }}</td>
+        <td class="lbl datos-divider">Moneda:</td>
+        <td>{{ $comprobante->moneda === 'PEN' ? 'SOLES (PEN)' : 'DÓLARES (USD)' }}</td>
+        <td class="lbl datos-divider">Forma de pago:</td>
+        <td class="bold">{{ $comprobante->forma_pago ?? 'Contado' }}</td>
+    </tr>
+    @if($comprobante->cliente_direccion)
+    <tr class="datos-row-border">
+        <td class="lbl">Dirección:</td>
+        <td colspan="3">{{ $comprobante->cliente_direccion }}</td>
+        <td class="lbl datos-divider">
+            @if($comprobante->forma_pago === 'Credito' && $comprobante->fecha_vencimiento)
+            F. Vencimiento:
+            @elseif($comprobante->moneda !== 'PEN')
+            Tipo cambio:
             @endif
-        </div>
-    </div>
-    <div class="section-col section-col-right">
-        <div class="section-box">
-            <div class="section-head">Datos del Comprobante</div>
-            <div class="kv-row">
-                <span class="kv-k">Fecha Emisión:</span>
-                <span class="kv-v">{{ $fechaEmision }}</span>
-            </div>
-            @if($comprobante->fecha_vencimiento)
-            <div class="kv-row">
-                <span class="kv-k">F. Vencimiento:</span>
-                <span class="kv-v">{{ $comprobante->fecha_vencimiento->format('d/m/Y') }}</span>
-            </div>
+        </td>
+        <td>
+            @if($comprobante->forma_pago === 'Credito' && $comprobante->fecha_vencimiento)
+            {{ $comprobante->fecha_vencimiento->format('d/m/Y') }}
+            @elseif($comprobante->moneda !== 'PEN')
+            {{ number_format($comprobante->tipo_cambio, 3) }}
             @endif
-            <div class="kv-row">
-                <span class="kv-k">Moneda:</span>
-                <span class="kv-v">{{ $comprobante->moneda === 'PEN' ? 'PEN - Soles' : 'USD - Dólares' }}</span>
-            </div>
-            @if($comprobante->moneda !== 'PEN')
-            <div class="kv-row">
-                <span class="kv-k">Tipo Cambio:</span>
-                <span class="kv-v">{{ number_format($comprobante->tipo_cambio, 3) }}</span>
-            </div>
-            @endif
-        </div>
-    </div>
-</div>
+        </td>
+    </tr>
+    @endif
+</table>
 
-{{-- ══════ ITEMS ══════ --}}
+{{-- ══════════════════════════════════
+     TABLA DE ITEMS
+══════════════════════════════════ --}}
 <table class="items-table">
     <thead>
         <tr>
-            <th style="text-align:left; width:38%;">Descripción</th>
-            <th class="c" style="width:7%;">Unid.</th>
-            <th class="r" style="width:8%;">Cant.</th>
-            <th class="r" style="width:12%;">P. Unit.</th>
-            <th class="c" style="width:7%;">Afect.</th>
-            <th class="r" style="width:10%;">Dcto.</th>
-            <th class="r" style="width:9%;">V. Venta</th>
-            <th class="r" style="width:9%;">Total</th>
+            <th style="width:3%; text-align:center;">N°</th>
+            <th style="width:8%; text-align:left;">Código</th>
+            <th style="width:33%; text-align:left;">Descripción</th>
+            <th style="width:5%;">U.M.</th>
+            <th style="width:7%;">Cant.</th>
+            <th style="width:10%;">P. Unit.</th>
+            <th style="width:7%;">Afect.</th>
+            <th style="width:8%;">Dscto.</th>
+            <th style="width:9%;">V. Venta</th>
+            <th style="width:10%;">Imp. Total</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($comprobante->detalles as $item)
+        @foreach($comprobante->detalles as $i => $item)
         <tr>
-            <td>
-                @if($item->codigo_producto)
-                <span style="color:#94a3b8; font-size:7.5px;">{{ $item->codigo_producto }} &middot; </span>
-                @endif
-                {{ $item->descripcion }}
+            <td class="center">{{ $i + 1 }}</td>
+            <td class="xsmall">{{ $item->codigo_producto ?? '—' }}</td>
+            <td>{{ $item->descripcion }}</td>
+            <td class="center">{{ $item->unidad_medida }}</td>
+            <td class="right">{{ number_format($item->cantidad, 2) }}</td>
+            <td class="right">{{ number_format($item->precio_unitario, 4) }}</td>
+            <td class="center xsmall">
+                {{ $item->tipo_afectacion_igv === '10' ? 'Gravado' : 'Exonerado' }}
             </td>
-            <td class="c">{{ $item->unidad_medida }}</td>
-            <td class="r">{{ number_format($item->cantidad, 2) }}</td>
-            <td class="r">{{ $monedaSimbolo }} {{ number_format($item->precio_unitario, 4) }}</td>
-            <td class="c">
-                @if($item->tipo_afectacion_igv === '10')
-                    <span class="badge-afecto">GRAV</span>
-                @else
-                    <span class="badge-exo">EXON</span>
-                @endif
+            <td class="right">
+                {{ $item->descuento > 0 ? number_format($item->descuento, 2) : '—' }}
             </td>
-            <td class="r">
-                @if($item->descuento > 0)
-                    {{ $monedaSimbolo }} {{ number_format($item->descuento, 2) }}
-                @else
-                    &mdash;
-                @endif
-            </td>
-            <td class="r">{{ $monedaSimbolo }} {{ number_format($item->subtotal, 2) }}</td>
-            <td class="r" style="font-weight:700;">{{ $monedaSimbolo }} {{ number_format($item->total_item, 2) }}</td>
+            <td class="right">{{ number_format($item->subtotal, 2) }}</td>
+            <td class="right bold">{{ number_format($item->total_item, 2) }}</td>
         </tr>
         @endforeach
+        {{-- filas vacías para rellenar (mínimo visual) --}}
+        @for($r = count($comprobante->detalles); $r < 5; $r++)
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        @endfor
     </tbody>
 </table>
 
-{{-- ══════ OBSERVACIONES + TOTALES ══════ --}}
-<div class="bottom-wrap">
-    <div class="obs-cell">
-        @if($comprobante->observaciones)
+{{-- ══════════════════════════════════
+     MONTO EN LETRAS
+══════════════════════════════════ --}}
+<div class="monto-letras">
+    Son: <span>{{ $montoLetras }}</span>
+</div>
+
+{{-- ══════════════════════════════════
+     OBSERVACIONES + TOTALES
+══════════════════════════════════ --}}
+<table class="bottom-table">
+<tr>
+    <td class="obs-cell">
         <div class="obs-box">
-            <div class="obs-head">Observaciones</div>
-            {{ $comprobante->observaciones }}
+            <div class="obs-lbl">Observaciones / Condiciones:</div>
+            {{ $comprobante->observaciones ?? '' }}
         </div>
-        @endif
-    </div>
-    <div class="tot-cell">
+    </td>
+    <td class="tot-cell">
         <table class="tot-table">
             @if($comprobante->op_gravadas > 0)
             <tr>
-                <td class="tot-label">Op. Gravadas:</td>
-                <td class="tot-value">{{ $monedaSimbolo }} {{ number_format($comprobante->op_gravadas, 2) }}</td>
+                <td class="tot-lbl">Op. Gravadas:</td>
+                <td class="tot-val">{{ $monedaSimbolo }} {{ number_format($comprobante->op_gravadas, 2) }}</td>
             </tr>
             @endif
             @if($comprobante->op_exoneradas > 0)
             <tr>
-                <td class="tot-label">Op. Exoneradas:</td>
-                <td class="tot-value">{{ $monedaSimbolo }} {{ number_format($comprobante->op_exoneradas, 2) }}</td>
+                <td class="tot-lbl">Op. Exoneradas:</td>
+                <td class="tot-val">{{ $monedaSimbolo }} {{ number_format($comprobante->op_exoneradas, 2) }}</td>
             </tr>
             @endif
             @if($comprobante->op_inafectas > 0)
             <tr>
-                <td class="tot-label">Op. Inafectas:</td>
-                <td class="tot-value">{{ $monedaSimbolo }} {{ number_format($comprobante->op_inafectas, 2) }}</td>
+                <td class="tot-lbl">Op. Inafectas:</td>
+                <td class="tot-val">{{ $monedaSimbolo }} {{ number_format($comprobante->op_inafectas, 2) }}</td>
+            </tr>
+            @endif
+            @if($comprobante->descuento_global > 0)
+            <tr>
+                <td class="tot-lbl">Dscto. Global:</td>
+                <td class="tot-val">– {{ $monedaSimbolo }} {{ number_format($comprobante->descuento_global, 2) }}</td>
             </tr>
             @endif
             <tr>
-                <td class="tot-label">IGV (18%):</td>
-                <td class="tot-value">{{ $monedaSimbolo }} {{ number_format($comprobante->igv, 2) }}</td>
+                <td class="tot-lbl">I.G.V. (18%):</td>
+                <td class="tot-val">{{ $monedaSimbolo }} {{ number_format($comprobante->igv, 2) }}</td>
             </tr>
-            <tr class="tot-divider tot-total">
-                <td class="tot-label">IMPORTE TOTAL {{ $comprobante->moneda }}:</td>
-                <td class="tot-value">{{ $monedaSimbolo }} {{ number_format($comprobante->total, 2) }}</td>
+            <tr class="tot-grand">
+                <td class="tot-lbl">IMPORTE TOTAL:</td>
+                <td class="tot-val">{{ $monedaSimbolo }} {{ number_format($comprobante->total, 2) }}</td>
             </tr>
         </table>
-    </div>
-</div>
+    </td>
+</tr>
+</table>
 
-{{-- ══════ PIE CON QR ══════ --}}
-<div class="footer-wrap">
-    <div class="footer-qr">
+{{-- ══════════════════════════════════
+     PIE: QR + TEXTO LEGAL
+══════════════════════════════════ --}}
+<table class="footer-table">
+<tr>
+    <td class="footer-qr">
         @if($qrBase64)
-        <img src="{{ $qrBase64 }}" class="qr-img" alt="QR">
-        <div class="qr-label">Escanea para verificar</div>
+        <img src="{{ $qrBase64 }}" class="qr-img" alt="QR SUNAT">
+        <div class="qr-lbl">Representación Impresa del CPE</div>
         @endif
-    </div>
-    <div class="footer-info">
-        <div class="footer-legal">
-            <strong>Representación impresa del Comprobante de Pago Electrónico.</strong><br>
-            Autorizado mediante Resolución de Superintendencia de SUNAT.<br>
-            Para verificar la validez de este documento, escanea el código QR<br>
-            o ingresa a <strong>https://e-consulta.sunat.gob.pe</strong><br><br>
-            @if($comprobante->hash_cpe)
-            <span style="font-size:6.5px; font-family:'Courier New',monospace; color:#cbd5e1; word-break:break-all;">
-                Hash: {{ $comprobante->hash_cpe }}
-            </span>
-            @endif
-        </div>
-    </div>
-</div>
+    </td>
+    <td class="footer-info">
+        Este documento es la representación impresa de un Comprobante de Pago Electrónico.<br>
+        Su validez puede ser verificada en el portal de SUNAT:<br>
+        <strong>https://e-consulta.sunat.gob.pe</strong><br><br>
+        Comprobante autorizado mediante Resolución de Superintendencia N° 097-2012/SUNAT<br>
+        y modificatorias.
+    </td>
+</tr>
+</table>
 
 </div>
 </body>

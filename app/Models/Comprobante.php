@@ -38,6 +38,8 @@ class Comprobante extends Model
         'enlace_pdf',
         'enlace_xml',
         'observaciones',
+        'forma_pago',
+        'condicion_pago',
         'comprobante_ref_id',
         'motivo_nota',
         'user_id',

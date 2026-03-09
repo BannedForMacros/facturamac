@@ -8,6 +8,8 @@ use Greenter\Model\Client\Client;
 use Greenter\Model\Company\Address;
 use Greenter\Model\Company\Company;
 use Greenter\Model\Sale\FormaPagos\FormaPagoContado;
+use Greenter\Model\Sale\FormaPagos\FormaPagoCredito;
+use Greenter\Model\Sale\Cuota;
 use Greenter\Model\Sale\Invoice;
 use Greenter\Model\Sale\Legend;
 use Greenter\Model\Sale\Note;
@@ -196,6 +198,20 @@ class SunatService
         ];
     }
 
+    private function buildFormaPago(Comprobante $comprobante)
+    {
+        if ($comprobante->forma_pago === 'Credito' && $comprobante->fecha_vencimiento) {
+            $cuota = (new Cuota())
+                ->setNumeroCuota('Cuota001')
+                ->setMonto((float) $comprobante->total)
+                ->setFechaPago(new \DateTime($comprobante->fecha_vencimiento->format('Y-m-d')));
+
+            return (new FormaPagoCredito((float) $comprobante->total, $comprobante->moneda))
+                ->setCuotas([$cuota]);
+        }
+        return new FormaPagoContado();
+    }
+
     private function buildNote(Comprobante $nc): Note
     {
         $motivosLabel = [
@@ -290,7 +306,7 @@ class SunatService
             ->setMtoImpVenta((float) $comprobante->total)
             ->setValorVenta((float) ($comprobante->op_gravadas + $comprobante->op_exoneradas + $comprobante->op_inafectas))
             ->setSubTotal((float) $comprobante->total)
-            ->setFormaPago(new FormaPagoContado())
+            ->setFormaPago($this->buildFormaPago($comprobante))
             ->setDescuentos([]);
 
         // Detalles

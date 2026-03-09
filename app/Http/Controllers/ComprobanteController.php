@@ -114,7 +114,9 @@ class ComprobanteController extends Controller
                 'op_inafectas' => $totales['op_inafectas'],
                 'igv' => $totales['igv'],
                 'total' => $totales['total'],
-                'observaciones' => $data['observaciones'] ?? null,
+                'observaciones'  => $data['observaciones'] ?? null,
+                'forma_pago'     => $data['forma_pago'] ?? 'Contado',
+                'condicion_pago' => $data['condicion_pago'] ?? null,
                 'estado' => 'borrador',
                 'user_id' => Auth::id(),
             ]);
@@ -170,10 +172,12 @@ class ComprobanteController extends Controller
         return Inertia::render('Comprobantes/Show', [
             'comprobante' => [
                 ...$comprobante->toArray(),
-                'numero' => $comprobante->numero,
-                'tipo_label' => $comprobante->tipo_label,
-                'estado_color' => $comprobante->estado_color,
-                'fecha_emision_fmt' => $comprobante->fecha_emision->format('d/m/Y'),
+                'numero'           => $comprobante->numero,
+                'tipo_label'       => $comprobante->tipo_label,
+                'estado_color'     => $comprobante->estado_color,
+                'fecha_emision_fmt'=> $comprobante->fecha_emision->format('d/m/Y'),
+                'forma_pago'       => $comprobante->forma_pago ?? 'Contado',
+                'condicion_pago'   => $comprobante->condicion_pago,
             ],
             'series_nc' => $seriesNc,
         ]);
@@ -418,6 +422,7 @@ class ComprobanteController extends Controller
             'fechaEmision'  => $comprobante->fecha_emision->format('d/m/Y'),
             'monedaSimbolo' => $comprobante->moneda === 'PEN' ? 'S/' : 'US$',
             'motivoLabel'   => $motivosLabel[$comprobante->motivo_nota ?? ''] ?? '',
+            'montoLetras'   => $this->numeroALetras((float) $comprobante->total, $comprobante->moneda),
         ];
 
         $filename = $comprobante->nombre_archivo . '.pdf';
@@ -431,7 +436,15 @@ class ComprobanteController extends Controller
                 ->setPaper('a4', 'portrait');
         }
 
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
+    }
+
+    private function numeroALetras(float $numero, string $moneda = 'PEN'): string
+    {
+        $monedaLabel = $moneda === 'PEN' ? 'SOLES' : 'DÓLARES AMERICANOS';
+        $entero      = (int) $numero;
+        $centavos    = round(($numero - $entero) * 100);
+        return "SON {$entero} CON {$centavos}/100 {$monedaLabel}";
     }
 
     private function generarQrBase64(string $contenido): string
