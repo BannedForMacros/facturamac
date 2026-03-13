@@ -53,7 +53,7 @@ class TenantController extends Controller
             'telefono' => 'nullable|string|max:20',
             'clave_sol_usuario' => 'nullable|string|max:50',
             'clave_sol_password' => 'nullable|string|max:100',
-            'certificado_pfx' => 'nullable|file|mimes:pfx,p12|max:2048',
+            'certificado_pfx' => 'nullable|file|mimetypes:application/x-pkcs12,application/pkcs12,application/octet-stream|max:2048',
             'certificado_password' => 'nullable|string|max:255',
             'sunat_beta' => 'boolean',
             'logo' => 'nullable|image|max:2048',

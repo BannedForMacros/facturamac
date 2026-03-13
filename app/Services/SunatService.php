@@ -65,11 +65,35 @@ class SunatService
 
     private function getCertificateFromPfx(string $pfxPath, ?string $password): string
     {
-        $pfxContent = file_get_contents($pfxPath);
-        $certs = [];
-        openssl_pkcs12_read($pfxContent, $certs, $password ?? '');
+        $cnfPath = storage_path('app/openssl-sunat.cnf');
 
-        return $certs['cert'] . $certs['pkey'];
+        // Escribir password en archivo temporal para no exponerla en CLI
+        $tmpPass = tempnam(sys_get_temp_dir(), 'pfxpass_');
+        file_put_contents($tmpPass, $password ?? '');
+
+        $pfxEsc  = escapeshellarg($pfxPath);
+        $tmpEsc  = escapeshellarg($tmpPass);
+        $cnfEsc  = escapeshellarg($cnfPath);
+
+        $certRaw = shell_exec("OPENSSL_CONF={$cnfEsc} openssl pkcs12 -in {$pfxEsc} -nokeys -legacy -passin file:{$tmpEsc} 2>/dev/null");
+        $pkeyRaw = shell_exec("OPENSSL_CONF={$cnfEsc} openssl pkcs12 -in {$pfxEsc} -nocerts -nodes -legacy -passin file:{$tmpEsc} 2>/dev/null");
+
+        unlink($tmpPass);
+
+        if (empty($certRaw) || empty($pkeyRaw)) {
+            throw new \RuntimeException('No se pudo leer el certificado PFX/P12. Verifica la contraseña.');
+        }
+
+        // Extraer solo el PRIMER certificado (end-entity), ignorar la cadena CA
+        preg_match('/-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/s', $certRaw, $certMatch);
+        // Extraer solo la clave privada limpia
+        preg_match('/-----BEGIN (?:ENCRYPTED )?PRIVATE KEY-----.*?-----END (?:ENCRYPTED )?PRIVATE KEY-----/s', $pkeyRaw, $pkeyMatch);
+
+        if (empty($certMatch[0]) || empty($pkeyMatch[0])) {
+            throw new \RuntimeException('No se pudo extraer el certificado o clave privada del PFX.');
+        }
+
+        return $certMatch[0] . "\n" . $pkeyMatch[0] . "\n";
     }
 
     private function getEndpoint(): string
