@@ -160,7 +160,7 @@ class ComprobanteController extends Controller
 
     public function show(Comprobante $comprobante): Response
     {
-        $comprobante->load('detalles.producto');
+        $comprobante->load(['detalles.producto', 'comprobanteRef', 'notasCredito']);
 
         // Series de NC según tipo del comprobante original (desde catálogo config)
         $prefijosNc = config('sunat.serie_prefijos_nc');
@@ -175,6 +175,11 @@ class ComprobanteController extends Controller
             ->map(fn($label, $code) => ['value' => $code, 'label' => "{$code} - {$label}"])
             ->values();
 
+        // NC que anula este comprobante (si existe)
+        $ncAnulacion = $comprobante->notasCredito
+            ->where('tipo_comprobante', '07')
+            ->first();
+
         return Inertia::render('Comprobantes/Show', [
             'comprobante' => [
                 ...$comprobante->toArray(),
@@ -184,6 +189,20 @@ class ComprobanteController extends Controller
                 'fecha_emision_fmt'=> $comprobante->fecha_emision->format('d/m/Y'),
                 'forma_pago'       => $comprobante->forma_pago ?? 'Contado',
                 'condicion_pago'   => $comprobante->condicion_pago,
+                // Para mostrar aviso de anulación
+                'nc_anulacion' => $ncAnulacion ? [
+                    'id'        => $ncAnulacion->id,
+                    'numero'    => $ncAnulacion->numero,
+                    'estado'    => $ncAnulacion->estado,
+                    'tipo_label'=> $ncAnulacion->tipo_label,
+                ] : null,
+                // Para NC: mostrar a qué comprobante hace referencia
+                'comprobante_ref' => $comprobante->comprobanteRef ? [
+                    'id'        => $comprobante->comprobanteRef->id,
+                    'numero'    => $comprobante->comprobanteRef->numero,
+                    'tipo_label'=> $comprobante->comprobanteRef->tipo_label,
+                    'estado'    => $comprobante->comprobanteRef->estado,
+                ] : null,
             ],
             'series_nc'  => $seriesNc,
             'motivos_nc' => $motivosNc,

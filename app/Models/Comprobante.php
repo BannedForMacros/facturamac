@@ -87,6 +87,11 @@ class Comprobante extends Model
         return $this->belongsTo(Comprobante::class, 'comprobante_ref_id');
     }
 
+    public function notasCredito(): HasMany
+    {
+        return $this->hasMany(Comprobante::class, 'comprobante_ref_id');
+    }
+
     public function getNumeroAttribute(): string
     {
         return "{$this->serie}-" . str_pad($this->correlativo, 8, '0', STR_PAD_LEFT);

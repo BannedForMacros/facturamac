@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { PageProps, Comprobante, Serie } from '@/types';
+import { FileWarning } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNotify } from '@/hooks/useNotify';
 import { Send, Ban, ArrowLeft, CheckCircle, XCircle, RefreshCw, Code, X, Copy, AlertCircle, FileX, Download } from 'lucide-react';
@@ -10,6 +11,13 @@ import Card from '@/Components/UI/Card';
 import Select from '@/Components/UI/Select';
 import ConfirmDialog from '@/Components/UI/ConfirmDialog';
 import axios from 'axios';
+
+interface DocRef {
+    id: number;
+    numero: string;
+    tipo_label: string;
+    estado: string;
+}
 
 interface Props extends PageProps {
     comprobante: Comprobante & {
@@ -24,6 +32,8 @@ interface Props extends PageProps {
             total_item: number;
             tipo_afectacion_igv: string;
         }>;
+        nc_anulacion: DocRef | null;
+        comprobante_ref: DocRef | null;
     };
     series_nc: Serie[];
     motivos_nc: { value: string; label: string }[];
@@ -216,6 +226,62 @@ export default function ComprobanteShow({ comprobante, flash, series_nc, motivos
             <Head title={`${comprobante.numero} - FacturaMac`} />
 
             <div className="space-y-4">
+                {/* Aviso: este comprobante fue anulado mediante una NC */}
+                {comprobante.estado === 'anulado' && comprobante.nc_anulacion && (
+                    <div className="flex items-start gap-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
+                        <FileWarning size={20} className="shrink-0 mt-0.5 text-orange-500" />
+                        <div>
+                            <p className="font-semibold text-sm text-orange-900">
+                                Comprobante anulado
+                            </p>
+                            <p className="text-sm text-orange-700 mt-0.5">
+                                Este comprobante fue anulado mediante la{' '}
+                                <Link
+                                    href={route('comprobantes.show', comprobante.nc_anulacion.id)}
+                                    className="font-semibold underline underline-offset-2 hover:text-orange-900"
+                                >
+                                    {comprobante.nc_anulacion.tipo_label} {comprobante.nc_anulacion.numero}
+                                </Link>
+                                {' '}(estado:{' '}
+                                <span className="font-medium">{comprobante.nc_anulacion.estado}</span>).
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Aviso: estado anulado pero aún sin NC registrada (anulación directa) */}
+                {comprobante.estado === 'anulado' && !comprobante.nc_anulacion && (
+                    <div className="flex items-start gap-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
+                        <FileWarning size={20} className="shrink-0 mt-0.5 text-orange-500" />
+                        <p className="text-sm text-orange-800 font-semibold">
+                            Este comprobante está anulado.
+                        </p>
+                    </div>
+                )}
+
+                {/* Aviso: este documento es una NC y referencia a otro comprobante */}
+                {comprobante.tipo_comprobante === '07' && comprobante.comprobante_ref && (
+                    <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <FileWarning size={20} className="shrink-0 mt-0.5 text-blue-500" />
+                        <div>
+                            <p className="font-semibold text-sm text-blue-900">
+                                Nota de Crédito
+                            </p>
+                            <p className="text-sm text-blue-700 mt-0.5">
+                                Este documento anula la{' '}
+                                <Link
+                                    href={route('comprobantes.show', comprobante.comprobante_ref.id)}
+                                    className="font-semibold underline underline-offset-2 hover:text-blue-900"
+                                >
+                                    {comprobante.comprobante_ref.tipo_label} {comprobante.comprobante_ref.numero}
+                                </Link>
+                                {' '}(estado:{' '}
+                                <span className="font-medium">{comprobante.comprobante_ref.estado}</span>).
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Estado SUNAT */}
                 {comprobante.sunat_codigo && (
                     <div className={`flex items-start gap-3 rounded-lg border p-4 ${comprobante.estado === 'aceptado' ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
