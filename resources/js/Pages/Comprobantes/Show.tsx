@@ -11,20 +11,6 @@ import Select from '@/Components/UI/Select';
 import ConfirmDialog from '@/Components/UI/ConfirmDialog';
 import axios from 'axios';
 
-// Motivos Nota de Crédito - Catálogo SUNAT 09
-const MOTIVOS_NC = [
-    { value: '01', label: '01 - Anulación de la operación' },
-    { value: '02', label: '02 - Anulación por error en RUC' },
-    { value: '03', label: '03 - Corrección en descripción' },
-    { value: '04', label: '04 - Descuento global' },
-    { value: '05', label: '05 - Descuento por ítem' },
-    { value: '06', label: '06 - Devolución total' },
-    { value: '07', label: '07 - Devolución por ítem' },
-    { value: '08', label: '08 - Bonificación' },
-    { value: '09', label: '09 - Disminución en el valor' },
-    { value: '10', label: '10 - Otros conceptos' },
-];
-
 interface Props extends PageProps {
     comprobante: Comprobante & {
         fecha_emision_fmt: string;
@@ -40,6 +26,7 @@ interface Props extends PageProps {
         }>;
     };
     series_nc: Serie[];
+    motivos_nc: { value: string; label: string }[];
 }
 
 const estadoVariant = (color: string): 'success' | 'info' | 'danger' | 'warning' | 'neutral' => {
@@ -49,7 +36,7 @@ const estadoVariant = (color: string): 'success' | 'info' | 'danger' | 'warning'
     return map[color] ?? 'neutral';
 };
 
-export default function ComprobanteShow({ comprobante, flash, series_nc }: Props) {
+export default function ComprobanteShow({ comprobante, flash, series_nc, motivos_nc }: Props) {
     const notify = useNotify();
     const [confirmAnular, setConfirmAnular] = useState(false);
 
@@ -385,7 +372,7 @@ export default function ComprobanteShow({ comprobante, flash, series_nc }: Props
                             <Select
                                 label="Motivo"
                                 required
-                                options={MOTIVOS_NC}
+                                options={motivos_nc}
                                 value={ncData.motivo}
                                 onChange={(e) => setNcData('motivo', e.target.value)}
                                 error={ncErrors.motivo}

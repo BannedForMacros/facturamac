@@ -162,12 +162,18 @@ class ComprobanteController extends Controller
     {
         $comprobante->load('detalles.producto');
 
-        // Series de NC según tipo del comprobante original
-        $prefijo = $comprobante->tipo_comprobante === '01' ? 'FC' : 'BC';
-        $seriesNc = Serie::where('tipo_comprobante', '07')
+        // Series de NC según tipo del comprobante original (desde catálogo config)
+        $prefijosNc = config('sunat.serie_prefijos_nc');
+        $prefijo    = $prefijosNc[$comprobante->tipo_comprobante] ?? null;
+        $seriesNc   = Serie::where('tipo_comprobante', '07')
             ->where('activo', true)
-            ->where('serie', 'like', $prefijo . '%')
+            ->when($prefijo, fn($q) => $q->where('serie', 'like', $prefijo . '%'))
             ->get(['id', 'serie', 'correlativo_actual']);
+
+        // Motivos NC desde catálogo oficial SUNAT (Catálogo 09)
+        $motivosNc = collect(config('sunat.motivos_nota_credito'))
+            ->map(fn($label, $code) => ['value' => $code, 'label' => "{$code} - {$label}"])
+            ->values();
 
         return Inertia::render('Comprobantes/Show', [
             'comprobante' => [
@@ -179,7 +185,8 @@ class ComprobanteController extends Controller
                 'forma_pago'       => $comprobante->forma_pago ?? 'Contado',
                 'condicion_pago'   => $comprobante->condicion_pago,
             ],
-            'series_nc' => $seriesNc,
+            'series_nc'  => $seriesNc,
+            'motivos_nc' => $motivosNc,
         ]);
     }
 
@@ -252,8 +259,8 @@ class ComprobanteController extends Controller
                 ]);
             }
 
-            // Marcar el comprobante original como anulado
-            $comprobante->update(['estado' => 'anulado']);
+            // NO marcamos el original como anulado aquí.
+            // Se marcará como anulado solo cuando SUNAT acepte la NC.
 
             DB::commit();
 
@@ -299,10 +306,14 @@ class ComprobanteController extends Controller
                 default => throw new \Exception('Tipo de comprobante no soportado'),
             };
 
-            // Código '0' = aceptado, '0004' = aceptado con observaciones, '4xxx' = rechazado
-            $codigoCdr = (string) ($resultado['codigo'] ?? '');
-            $aceptado  = $resultado['success'] && ($codigoCdr === '0' || str_starts_with($codigoCdr, '2') || $codigoCdr === '');
-            $estado    = $aceptado ? 'aceptado' : 'rechazado';
+            // Determinar si SUNAT aceptó según catálogo de códigos CDR
+            $codigoCdr       = (string) ($resultado['codigo'] ?? '');
+            $codigosAceptado = config('sunat.cdr_codigos_aceptado', ['0', '']);
+            $prefijosObservado = config('sunat.cdr_prefijos_observado', ['2']);
+            $esObservado     = collect($prefijosObservado)
+                ->contains(fn($p) => $p !== '' && str_starts_with($codigoCdr, $p));
+            $aceptado        = $resultado['success'] && (in_array($codigoCdr, $codigosAceptado) || $esObservado);
+            $estado          = $aceptado ? 'aceptado' : 'rechazado';
 
             $comprobante->update([
                 'estado'           => $estado,
@@ -311,6 +322,13 @@ class ComprobanteController extends Controller
                 'sunat_codigo'     => $codigoCdr,
                 'sunat_descripcion'=> $resultado['descripcion'] ?? null,
             ]);
+
+            // Si es Nota de Crédito aceptada, marcar el comprobante original como anulado
+            if ($aceptado && $comprobante->tipo_comprobante === '07' && $comprobante->comprobante_ref_id) {
+                Comprobante::withoutGlobalScopes()
+                    ->where('id', $comprobante->comprobante_ref_id)
+                    ->update(['estado' => 'anulado']);
+            }
 
             $notas   = $resultado['notas'] ?? [];
             $mensaje = $aceptado

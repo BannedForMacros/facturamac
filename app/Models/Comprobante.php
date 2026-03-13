@@ -94,13 +94,7 @@ class Comprobante extends Model
 
     public function getTipoLabelAttribute(): string
     {
-        return match($this->tipo_comprobante) {
-            '01' => 'Factura',
-            '03' => 'Boleta de Venta',
-            '07' => 'Nota de Crédito',
-            '08' => 'Nota de Débito',
-            default => 'Comprobante',
-        };
+        return config('sunat.tipos')[$this->tipo_comprobante] ?? 'Comprobante';
     }
 
     public function getEstadoColorAttribute(): string

@@ -21,10 +21,10 @@ return [
     // Ruta de certificados (dentro de storage/app/private/)
     'cert_path' => env('SUNAT_CERT_PATH', 'certificados'),
 
-    // IGV vigente en Perú
+    // IGV vigente en Perú (Decreto Legislativo 821)
     'igv_porcentaje' => 18,
 
-    // Tipos de comprobante
+    // Catálogo 01 - Tipos de comprobante
     'tipos' => [
         '01' => 'Factura',
         '03' => 'Boleta de Venta',
@@ -32,6 +32,48 @@ return [
         '08' => 'Nota de Débito',
         '09' => 'Guía de Remisión Remitente',
     ],
+
+    // Catálogo 09 - Motivos de Nota de Crédito
+    'motivos_nota_credito' => [
+        '01' => 'Anulación de la operación',
+        '02' => 'Anulación por error en el RUC',
+        '03' => 'Corrección por error en la descripción',
+        '04' => 'Descuento global',
+        '05' => 'Descuento por ítem',
+        '06' => 'Devolución total',
+        '07' => 'Devolución por ítem',
+        '08' => 'Bonificación',
+        '09' => 'Disminución en el valor',
+        '10' => 'Otros conceptos',
+        '11' => 'Ajustes de operaciones de exportación',
+        '12' => 'Ajuste por diferencia de cambio',
+        '13' => 'Corrección por error en el monto',
+    ],
+
+    // Catálogo 51 - Tipos de operación (facturas/boletas)
+    'tipos_operacion' => [
+        '0101' => 'Venta interna',
+        '0200' => 'Exportación de Bienes',
+        '0201' => 'Exportación de Servicios',
+        '1001' => 'Operación Sujeta a Detracción',
+        '2001' => 'Operación Sujeta a Percepción',
+    ],
+
+    // Tipo de operación por defecto (venta interna)
+    'tipo_operacion_default' => '0101',
+
+    // Prefijos de serie para Nota de Crédito según tipo del comprobante referenciado
+    // Catálogo 10 SUNAT: FC = NC de factura, BC = NC de boleta
+    'serie_prefijos_nc' => [
+        '01' => 'FC',
+        '03' => 'BC',
+    ],
+
+    // Códigos CDR de SUNAT que significan "aceptado" (coincidencia exacta)
+    'cdr_codigos_aceptado' => ['0', ''],
+
+    // Prefijos de código CDR que significan "aceptado con observaciones" (aún válido)
+    'cdr_prefijos_observado' => ['2'],
 
     // Catálogo de unidades de medida (parcial)
     'unidades_medida' => [

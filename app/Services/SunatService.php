@@ -238,18 +238,7 @@ class SunatService
 
     private function buildNote(Comprobante $nc): Note
     {
-        $motivosLabel = [
-            '01' => 'Anulación de la operación',
-            '02' => 'Anulación por error en RUC',
-            '03' => 'Corrección por error en la descripción',
-            '04' => 'Descuento global',
-            '05' => 'Descuento por ítem',
-            '06' => 'Devolución total',
-            '07' => 'Devolución por ítem',
-            '08' => 'Bonificación',
-            '09' => 'Disminución en el valor',
-            '10' => 'Otros conceptos',
-        ];
+        $motivosLabel = config('sunat.motivos_nota_credito');
 
         $ref = $nc->comprobanteRef;
 
@@ -276,6 +265,8 @@ class SunatService
             ->setValorVenta((float) ($nc->op_gravadas + $nc->op_exoneradas + $nc->op_inafectas))
             ->setSubTotal((float) $nc->total);
 
+        $igvPct = (float) config('sunat.igv_porcentaje', 18);
+
         $details = [];
         foreach ($nc->detalles as $item) {
             $detail = (new SaleDetail())
@@ -286,7 +277,7 @@ class SunatService
                 ->setMtoValorUnitario((float) $item->precio_unitario)
                 ->setDescripcion($item->descripcion)
                 ->setMtoBaseIgv((float) $item->subtotal)
-                ->setPorcentajeIgv(18.00)
+                ->setPorcentajeIgv($igvPct)
                 ->setIgv((float) $item->igv_item)
                 ->setTipAfeIgv($item->tipo_afectacion_igv)
                 ->setTotalImpuestos((float) $item->igv_item)
@@ -308,10 +299,12 @@ class SunatService
 
     private function buildInvoice(Comprobante $comprobante): Invoice
     {
+        $igvPct = (float) config('sunat.igv_porcentaje', 18);
+
         $invoice = new Invoice();
         $invoice
             ->setUblVersion('2.1')
-            ->setTipoOperacion('0101') // Venta interna
+            ->setTipoOperacion($comprobante->tipo_operacion ?? config('sunat.tipo_operacion_default'))
             ->setTipoDoc($comprobante->tipo_comprobante)
             ->setSerie($comprobante->serie)
             ->setCorrelativo(str_pad($comprobante->correlativo, 8, '0', STR_PAD_LEFT))
@@ -344,7 +337,7 @@ class SunatService
                 ->setMtoValorUnitario((float) $item->precio_unitario)
                 ->setDescripcion($item->descripcion)
                 ->setMtoBaseIgv((float) $item->subtotal)
-                ->setPorcentajeIgv(18.00)
+                ->setPorcentajeIgv($igvPct)
                 ->setIgv((float) $item->igv_item)
                 ->setTipAfeIgv($item->tipo_afectacion_igv)
                 ->setTotalImpuestos((float) $item->igv_item)
