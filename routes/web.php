@@ -23,9 +23,11 @@ Route::middleware(['auth', 'verified', 'tenant'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Clientes
-    Route::resource('clientes', ClienteController::class)->except(['show']);
+    // Clientes (rutas específicas ANTES del resource para evitar conflictos con {cliente})
     Route::get('/clientes/buscar', [ClienteController::class, 'buscar'])->name('clientes.buscar');
+    Route::get('/clientes/consultar-documento', [ClienteController::class, 'consultarDocumento'])->name('clientes.consultarDocumento');
+    Route::post('/clientes/modal', [ClienteController::class, 'storeModal'])->name('clientes.storeModal');
+    Route::resource('clientes', ClienteController::class)->except(['show']);
 
     // Productos
     Route::resource('productos', ProductoController::class)->except(['show']);

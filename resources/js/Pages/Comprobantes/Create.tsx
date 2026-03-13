@@ -3,12 +3,13 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { PageProps, Cliente, Producto, Serie } from '@/types';
 import { useState, useCallback, useEffect } from 'react';
 import { useNotify } from '@/hooks/useNotify';
-import { Trash2 } from 'lucide-react';
+import { Trash2, UserPlus } from 'lucide-react';
 import Button from '@/Components/UI/Button';
 import Input from '@/Components/UI/Input';
 import Select from '@/Components/UI/Select';
 import SelectSearch from '@/Components/UI/SelectSearch';
 import Card from '@/Components/UI/Card';
+import ClienteModal from '@/Components/ClienteModal';
 import axios from 'axios';
 
 interface DetalleForm {
@@ -65,6 +66,7 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
 
     // Estado local para cliente seleccionado
     const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
+    const [showClienteModal, setShowClienteModal] = useState(false);
     const [detalles, setDetalles] = useState<DetalleForm[]>([]);
 
     const { data, setData, post, processing, errors } = useForm<{
@@ -270,6 +272,13 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
                 <Card>
                     <Card.Header title="Datos del Cliente" />
                     <Card.Body>
+                        <ClienteModal
+                            show={showClienteModal}
+                            onClose={() => setShowClienteModal(false)}
+                            onCreated={(nuevoCliente) => {
+                                seleccionarCliente(nuevoCliente);
+                            }}
+                        />
                         {clienteSeleccionado ? (
                             <div className="flex items-start justify-between rounded-lg bg-blue-50 border border-blue-200 p-4">
                                 <div>
@@ -313,10 +322,15 @@ export default function ComprobanteCreate({ tipo_inicial, series, tipo_comproban
                                         </div>
                                     )}
                                 />
-                                <div className="mt-1.5">
-                                    <Link href={route('clientes.create')} className="text-xs text-blue-600 hover:underline">
-                                        + Crear nuevo cliente
-                                    </Link>
+                                <div className="mt-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowClienteModal(true)}
+                                        className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                                    >
+                                        <UserPlus size={13} />
+                                        Crear nuevo cliente
+                                    </button>
                                 </div>
                             </div>
                         )}
