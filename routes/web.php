@@ -9,8 +9,13 @@ use App\Http\Controllers\SerieController;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
-// Redirigir raíz al dashboard o login
-Route::get('/', fn() => redirect()->route('dashboard'));
+// Página de bienvenida o redirigir al dashboard si ya está autenticado
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return inertia('Welcome');
+})->name('welcome');
 
 // Rutas protegidas: autenticación + tenant
 Route::middleware(['auth', 'verified', 'tenant'])->group(function () {
